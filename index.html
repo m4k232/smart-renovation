@@ -27,7 +27,7 @@
         <div class="w-full lg:w-5/12 space-y-6 text-center lg:text-left">
             <div class="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-400 text-xs px-3 py-1.5 rounded-full font-medium border border-indigo-500/20">
                 <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                Smart Estimator v2.3 (Secure Local Env)
+                Smart Estimator v3.0 (Vercel Serverless)
             </div>
             
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
@@ -227,8 +227,6 @@
 
     </div>
 
-    <script src="env.js"></script>
-
     <script>
         let currentStep = 1;
         const totalQuestions = 3; 
@@ -305,6 +303,7 @@
             }
         }
 
+        // Custom card selection styles (Step 1)
         function selectOption(input) {
             const container = input.closest('.grid');
             container.querySelectorAll('label').forEach(label => {
@@ -320,6 +319,7 @@
             }
         }
 
+        // Custom list item selection styles (Step 3)
         function selectRepairOption(input) {
             const container = input.closest('.space-y-3');
             container.querySelectorAll('label').forEach(label => {
@@ -335,6 +335,7 @@
             }
         }
 
+        // Handling step routing
         function changeStep(direction) {
             const currentStepDiv = document.getElementById(`step-${currentStep}`);
             if (currentStepDiv) currentStepDiv.classList.add('hidden');
@@ -355,6 +356,7 @@
                 document.getElementById('step-percent').innerText = `${percent}% completed`;
                 document.getElementById('progress-bar').style.width = `${percent}%`;
             } else if (currentStep === 4) {
+                // Final Results Screen
                 document.getElementById('step-result').classList.remove('hidden');
                 document.getElementById('navigation-buttons').classList.add('hidden'); 
                 
@@ -399,7 +401,7 @@
             document.getElementById('total-price').innerText = formattedPrice;
         }
 
-        // === LIVE TELEGRAM PIPELINE INTEGRATION ===
+        // === LIVE VERCEL PIPELINE INTEGRATION ===
         async function submitLeadForm(btnElement) {
             const contactInput = document.getElementById('user-contact');
             
@@ -412,13 +414,6 @@
                 contactInput.classList.remove('border-red-500');
             }
 
-            // Проверяем, подгрузились ли переменные из файла env.js
-            if (typeof TELEGRAM_BOT_TOKEN === 'undefined' || typeof TELEGRAM_CHAT_ID === 'undefined') {
-                console.error("Configuration Error: env.js file is missing or variables are undefined.");
-                alert("Error: Local environment configuration not found. Please ensure env.js is created locally.");
-                return;
-            }
-
             // Lock UI button interactions and show pending loader
             btnElement.disabled = true;
             const originalText = btnElement.innerText;
@@ -426,47 +421,35 @@
 
             // Parse selected components to human-readable names
             const rawHousing = document.querySelector('input[name="housingType"]:checked').value;
-            const housingMap = { new: "New Build 🏢", resale: "Resale 🧱", house: "House 🏡" };
-            const housingText = housingMap[rawHousing] || rawHousing;
-
             const areaSizeValue = document.getElementById('area-slider').value;
             const unitSystemText = currentUnit === 'metric' ? 'sq.m.' : 'sq.ft.';
-
             const rawRepair = document.querySelector('input[name="repairType"]:checked').value;
-            const repairMap = { cosmetic: "Cosmetic ⚡", capital: "Major Renovation 🛠", designer: "Premium Design ✨" };
-            const repairText = repairMap[rawRepair] || rawRepair;
-
             const computedPrice = document.getElementById('total-price').innerText;
             const userEndpointContact = contactInput.value.trim();
 
-            // Structure Markdown message template string
-            const telegramMessage = `🚀 *New Renovation Lead Received!*\n\n` +
-                                      `• *Property Layout:* ${housingText}\n` +
-                                      `• *Total Workspace Sizing:* ${areaSizeValue} ${unitSystemText}\n` +
-                                      `• *Renovation Standard:* ${repairText}\n` +
-                                      `• *Computed Estimate Value:* ${computedPrice}\n\n` +
-                                      `📞 *User Lead Contact:* ${userEndpointContact}`;
-
-            const targetApiEndpoint = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            const targetApiEndpoint = '/api/send';
 
             try {
                 const response = await fetch(targetApiEndpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: telegramMessage,
-                        parse_mode: 'Markdown'
+                        type: rawHousing,
+                        area: `${areaSizeValue} ${unitSystemText}`,
+                        repairType: rawRepair,
+                        price: computedPrice,
+                        contact: userEndpointContact
                     })
                 });
 
-                if (response.ok) {
+                const result = await response.json();
+
+                if (response.ok && result.success) {
                     document.getElementById('step-result').classList.add('hidden');
                     document.getElementById('step-success').classList.remove('hidden');
                 } else {
-                    const errors = await response.json();
-                    console.error("Telegram API rejects execution request:", errors);
-                    alert("Could not process transmission payload. Check Telegram chat permissions.");
+                    console.error("Server rejects request:", result);
+                    alert("Error from server: " + (result.error || "Could not process request."));
                 }
             } catch (networkError) {
                 console.error("Network interface pipeline fault:", networkError);
@@ -490,5 +473,4 @@
         }
     </script>
 </body>
-<!-- Текст для проверки коммита -->
 </html>
