@@ -2,7 +2,7 @@
 
 A sleek, highly interactive, and production-ready single-page web application designed to help clients estimate their construction or renovation budgets in under 60 seconds. This project features a premium modern dark SaaS aesthetic, full internationalization support, and a secure serverless backend layout to handle client conversions safely.
 
-🚀 **Live Preview:** [Insert your GitHub Pages or Vercel Deployment Link Here]
+🚀 **Live Preview:** [https://smart-renovation-seven.vercel.app]
 
 ---
 
