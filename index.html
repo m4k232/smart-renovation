@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Renovation Cost Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Smooth transitions for quiz steps */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-50 min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-12">
+
+    <div class="w-full max-w-5xl flex flex-col lg:flex-row gap-12 items-center justify-between">
+        
+        <div class="w-full lg:w-5/12 space-y-6 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-400 text-xs px-3 py-1.5 rounded-full font-medium border border-indigo-500/20">
+                <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                Smart Estimator v2.3 (Secure Local Env)
+            </div>
+            
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                Calculate your <br class="hidden lg:inline">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                    renovation budget
+                </span> <br>
+                in 60 seconds.
+            </h1>
+            
+            <p class="text-zinc-400 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                Planning a renovation can be overwhelming. Avoid overpaying contractors and hidden fees. 
+                Our interactive tool analyzes your property type and sizing parameters to generate an accurate, market-rate structural estimate instantly.
+            </p>
+            
+            <ul class="space-y-3 text-left max-w-md mx-auto lg:mx-0 text-sm text-zinc-300">
+                <li class="flex items-start gap-3">
+                    <span class="text-indigo-400 font-bold mt-0.5">✓</span>
+                    <span><strong>Secure Architecture:</strong> Sensitive API keys are strictly decoupled from production source control.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-indigo-400 font-bold mt-0.5">✓</span>
+                    <span><strong>Global Measurements:</strong> Supports calculation parameters in both Metric (sq.m.) and Imperial (sq.ft.) standards.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-indigo-400 font-bold mt-0.5">✓</span>
+                    <span><strong>Bonus Reward:</strong> Secure a locked-in 10% discount blueprint upon completing the 3-step form.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="w-full lg:w-7/12 bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300">
+            
+            <div class="p-6 border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-sm sticky top-0 z-10">
+                <div class="flex justify-between items-center mb-3">
+                    <span id="step-title" class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Step 1 of 3</span>
+                    <span id="step-percent" class="text-xs font-medium text-zinc-400">33% completed</span>
+                </div>
+                <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-full w-1/3 transition-all duration-500 ease-out rounded-full shadow-[0_0_12px_rgba(79,70,229,0.4)]"></div>
+                </div>
+            </div>
+
+            <form id="quiz-form" class="p-6 sm:p-8" onsubmit="event.preventDefault();">
+                
+                <div id="step-1" class="quiz-step fade-in">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-2">Select your property type</h2>
+                    <p class="text-sm text-zinc-400 mb-6">This helps us account for specific structural and preparation requirements.</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <label class="relative flex flex-col p-5 bg-zinc-800/40 border-2 border-zinc-800 rounded-xl cursor-pointer hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                            <input type="radio" name="housingType" value="new" class="sr-only" checked onchange="selectOption(this)">
+                            <span class="text-3xl mb-3 block">🏢</span>
+                            <span class="font-semibold text-zinc-200 group-hover:text-white">New Build</span>
+                            <span class="text-xs text-zinc-500 mt-1">Bare walls, completely clean canvas</span>
+                            <div class="absolute top-3 right-3 w-4 h-4 rounded-full border border-zinc-600 flex items-center justify-center checked-marker bg-indigo-600 border-indigo-600"></div>
+                        </label>
+
+                        <label class="relative flex flex-col p-5 bg-zinc-800/40 border-2 border-zinc-800 rounded-xl cursor-pointer hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                            <input type="radio" name="housingType" value="resale" class="sr-only" onchange="selectOption(this)">
+                            <span class="text-3xl mb-3 block">🧱</span>
+                            <span class="font-semibold text-zinc-200 group-hover:text-white">Resale</span>
+                            <span class="text-xs text-zinc-500 mt-1">Requires demolition of old finishes</span>
+                            <div class="absolute top-3 right-3 w-4 h-4 rounded-full border border-zinc-600 flex items-center justify-center checked-marker"></div>
+                        </label>
+
+                        <label class="relative flex flex-col p-5 bg-zinc-800/40 border-2 border-zinc-800 rounded-xl cursor-pointer hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                            <input type="radio" name="housingType" value="house" class="sr-only" onchange="selectOption(this)">
+                            <span class="text-3xl mb-3 block">🏡</span>
+                            <span class="font-semibold text-zinc-200 group-hover:text-white">House</span>
+                            <span class="text-xs text-zinc-500 mt-1">Includes complex utility systems</span>
+                            <div class="absolute top-3 right-3 w-4 h-4 rounded-full border border-zinc-600 flex items-center justify-center checked-marker"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="step-2" class="quiz-step fade-in hidden">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-2">Specify the total area</h2>
+                    <p class="text-sm text-zinc-400 mb-6">Choose your preferred unit system and adjust the sizing metrics slider.</p>
+                    
+                    <div class="bg-zinc-800/30 border border-zinc-800/80 rounded-xl p-6 mb-6">
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-zinc-800/60">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Unit System</span>
+                            <div class="inline-flex rounded-lg p-0.5 bg-zinc-950 border border-zinc-800 text-xs font-medium">
+                                <button type="button" id="btn-metric" onclick="setUnit('metric')" class="px-3 py-1.5 rounded-md bg-indigo-600 text-white transition-all duration-200">
+                                    Metric (m²)
+                                </button>
+                                <button type="button" id="btn-imperial" onclick="setUnit('imperial')" class="px-3 py-1.5 rounded-md text-zinc-400 hover:text-zinc-200 transition-all duration-200">
+                                    Imperial (ft²)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-baseline mb-4">
+                            <span class="text-sm font-medium text-zinc-400">Total Size:</span>
+                            <span class="text-3xl font-extrabold text-indigo-400">
+                                <span id="area-val">45</span> 
+                                <span class="text-xl font-normal text-zinc-300 transition-all" id="unit-label">sq.m.</span>
+                            </span>
+                        </div>
+
+                        <input type="range" id="area-slider" min="20" max="150" value="45" 
+                               class="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 focus:outline-none"
+                               oninput="updateAreaValue(this.value)">
+                        
+                        <div class="flex justify-between text-xs text-zinc-500 mt-2">
+                            <span id="slider-min">20 sq.m.</span>
+                            <span id="slider-mid">85 sq.m.</span>
+                            <span id="slider-max">150 sq.m.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step-3" class="quiz-step fade-in hidden">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-2">What kind of renovation do you need?</h2>
+                    <p class="text-sm text-zinc-400 mb-6">Select the standard of finish depending on your goals and budget.</p>
+                    
+                    <div class="space-y-3">
+                        <label class="relative flex items-center p-4 bg-zinc-800/40 border-2 border-zinc-800 rounded-xl cursor-pointer hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                            <input type="radio" name="repairType" value="cosmetic" class="sr-only" checked onchange="selectRepairOption(this)">
+                            <div class="w-5 h-5 rounded-full border border-zinc-600 flex items-center justify-center mr-4 checked-marker bg-indigo-600 border-indigo-600"></div>
+                            <div class="flex-1">
+                                <span class="block font-semibold text-zinc-200 group-hover:text-white">Cosmetic</span>
+                                <span class="block text-xs text-zinc-400 mt-0.5">Wallpaper refreshing, painting, laminate replacement. Fast and affordable.</span>
+                            </div>
+                        </label>
+
+                        <label class="relative flex items-center p-4 bg-zinc-800/40 border-2 border-zinc-800 rounded-xl cursor-pointer hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                            <input type="radio" name="repairType" value="capital" class="sr-only" onchange="selectRepairOption(this)">
+                            <div class="w-5 h-5 rounded-full border border-zinc-600 flex items-center justify-center mr-4 checked-marker"></div>
+                            <div class="flex-1">
+                                <span class="block font-semibold text-zinc-200 group-hover:text-white">Major Renovation</span>
+                                <span class="block text-xs text-zinc-400 mt-0.5">Wall leveling, new screed, complete rewiring and plumbing. Turnkey setup.</span>
+                            </div>
+                        </label>
+
+                        <label class="relative flex items-center p-4 bg-zinc-800/40 border-2 border-zinc-800 rounded-xl cursor-pointer hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                            <input type="radio" name="repairType" value="designer" class="sr-only" onchange="selectRepairOption(this)">
+                            <div class="w-5 h-5 rounded-full border border-zinc-600 flex items-center justify-center mr-4 checked-marker"></div>
+                            <div class="flex-1">
+                                <span class="block font-semibold text-zinc-200 group-hover:text-white">Premium Design ✨</span>
+                                <span class="block text-xs text-zinc-400 mt-0.5">Bespoke design project, luxury materials, advanced structural and lighting solutions.</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="step-result" class="quiz-step fade-in hidden">
+                    <div class="text-center mb-6">
+                        <span class="inline-block bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1 rounded-full font-medium mb-3 border border-emerald-500/20">Calculation Ready!</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold mb-1">Estimated Cost:</h2>
+                        <div class="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 my-4" id="total-price">
+                            $0
+                        </div>
+                        <p class="text-xs text-zinc-400 max-w-md mx-auto">This estimation is tentative and covers basic labor costs along with rough building materials.</p>
+                    </div>
+
+                    <div class="bg-zinc-800/50 border border-indigo-500/20 rounded-xl p-5 sm:p-6 shadow-[inset_0_1px_20px_rgba(79,70,229,0.05)]">
+                        <h3 class="text-base font-semibold mb-2 text-center text-zinc-200">Secure your 10% discount on labor!</h3>
+                        <p class="text-xs text-zinc-400 text-center mb-4">Leave your contact details below. We will send over a detailed itemized estimate within 15 minutes.</p>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-400 mb-1">Telegram or Phone Number</label>
+                                <input type="text" id="user-contact" required placeholder="@username or +1 (555) 000-0000" 
+                                       class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+                            </div>
+                            <button type="button" id="submit-lead-btn" onclick="submitLeadForm(this)" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium text-sm py-3 px-4 rounded-lg shadow-lg shadow-indigo-600/20 transition-all active:scale-[0.99]">
+                                Get My Estimate With Discount
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step-success" class="quiz-step fade-in hidden text-center py-8">
+                    <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                        ✓
+                    </div>
+                    <h2 class="text-2xl font-bold mb-2">Request Successfully Received!</h2>
+                    <p class="text-zinc-400 text-sm max-w-sm mx-auto mb-6">Thank you! Our structural estimator is already reviewing your property configurations and will be in touch with you shortly.</p>
+                    <button type="button" onclick="restartQuiz()" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium underline underline-offset-4">
+                        Take the quiz again
+                    </button>
+                </div>
+
+                <div id="navigation-buttons" class="mt-8 flex justify-between items-center gap-4 border-t border-zinc-800/60 pt-6">
+                    <button type="button" id="prev-btn" onclick="changeStep(-1)" class="px-5 py-2.5 rounded-lg border border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800/50 text-sm font-medium text-zinc-300 transition-all opacity-0 pointer-events-none">
+                        Back
+                    </button>
+                    <button type="button" id="next-btn" onclick="changeStep(1)" class="ml-auto px-6 py-2.5 bg-zinc-100 hover:bg-white text-zinc-950 font-medium text-sm rounded-lg shadow-md transition-all active:scale-[0.98]">
+                        Next →
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <script src="env.js"></script>
+
+    <script>
+        let currentStep = 1;
+        const totalQuestions = 3; 
+        let currentUnit = 'metric'; 
+
+        const BASE_PRICES = {
+            cosmetic: 120,  
+            capital: 280,   
+            designer: 550   
+        };
+
+        const HOUSING_MULTIPLIERS = {
+            new: 1.0,       
+            resale: 1.15,   
+            house: 1.25     
+        };
+
+        function updateAreaValue(val) {
+            document.getElementById('area-val').innerText = val;
+        }
+
+        function setUnit(unit) {
+            if (unit === currentUnit) return;
+            
+            const slider = document.getElementById('area-slider');
+            const currentVal = parseInt(slider.value);
+            
+            const btnMetric = document.getElementById('btn-metric');
+            const btnImperial = document.getElementById('btn-imperial');
+            const unitLabel = document.getElementById('unit-label');
+            
+            const lblMin = document.getElementById('slider-min');
+            const lblMid = document.getElementById('slider-mid');
+            const lblMax = document.getElementById('slider-max');
+
+            if (unit === 'imperial') {
+                currentUnit = 'imperial';
+                btnMetric.className = "px-3 py-1.5 rounded-md text-zinc-400 hover:text-zinc-200 transition-all duration-200";
+                btnImperial.className = "px-3 py-1.5 rounded-md bg-indigo-600 text-white transition-all duration-200";
+                unitLabel.innerText = "sq.ft.";
+
+                let convertedVal = Math.round(currentVal * 10.7639);
+                if (convertedVal < 200) convertedVal = 200;
+                if (convertedVal > 1600) convertedVal = 1600;
+
+                slider.min = 200;
+                slider.max = 1600;
+                slider.value = convertedVal;
+                
+                lblMin.innerText = "200 sq.ft.";
+                lblMid.innerText = "900 sq.ft.";
+                lblMax.innerText = "1600 sq.ft.";
+                
+                updateAreaValue(convertedVal);
+            } else {
+                currentUnit = 'metric';
+                btnImperial.className = "px-3 py-1.5 rounded-md text-zinc-400 hover:text-zinc-200 transition-all duration-200";
+                btnMetric.className = "px-3 py-1.5 rounded-md bg-indigo-600 text-white transition-all duration-200";
+                unitLabel.innerText = "sq.m.";
+
+                let convertedVal = Math.round(currentVal / 10.7639);
+                if (convertedVal < 20) convertedVal = 20;
+                if (convertedVal > 150) convertedVal = 150;
+
+                slider.min = 20;
+                slider.max = 150;
+                slider.value = convertedVal;
+
+                lblMin.innerText = "20 sq.m.";
+                lblMid.innerText = "85 sq.m.";
+                lblMax.innerText = "150 sq.m.";
+
+                updateAreaValue(convertedVal);
+            }
+        }
+
+        function selectOption(input) {
+            const container = input.closest('.grid');
+            container.querySelectorAll('label').forEach(label => {
+                label.classList.remove('border-indigo-600', 'bg-zinc-800');
+                label.classList.add('border-zinc-800', 'bg-zinc-800/40');
+                label.querySelector('.checked-marker').classList.remove('bg-indigo-600', 'border-indigo-600');
+            });
+            if (input.checked) {
+                const parentLabel = input.closest('label');
+                parentLabel.classList.remove('border-zinc-800', 'bg-zinc-800/40');
+                parentLabel.classList.add('border-indigo-600', 'bg-zinc-800');
+                parentLabel.querySelector('.checked-marker').classList.add('bg-indigo-600', 'border-indigo-600');
+            }
+        }
+
+        function selectRepairOption(input) {
+            const container = input.closest('.space-y-3');
+            container.querySelectorAll('label').forEach(label => {
+                label.classList.remove('border-indigo-600', 'bg-zinc-800');
+                label.classList.add('border-zinc-800', 'bg-zinc-800/40');
+                label.querySelector('.checked-marker').classList.remove('bg-indigo-600', 'border-indigo-600');
+            });
+            if (input.checked) {
+                const parentLabel = input.closest('label');
+                parentLabel.classList.remove('border-zinc-800', 'bg-zinc-800/40');
+                parentLabel.classList.add('border-indigo-600', 'bg-zinc-800');
+                parentLabel.querySelector('.checked-marker').classList.add('bg-indigo-600', 'border-indigo-600');
+            }
+        }
+
+        function changeStep(direction) {
+            const currentStepDiv = document.getElementById(`step-${currentStep}`);
+            if (currentStepDiv) currentStepDiv.classList.add('hidden');
+
+            currentStep += direction;
+            showStep();
+        }
+
+        function showStep() {
+            if (currentStep <= totalQuestions) {
+                const nextStepDiv = document.getElementById(`step-${currentStep}`);
+                if (nextStepDiv) nextStepDiv.classList.remove('hidden');
+                
+                document.getElementById('navigation-buttons').classList.remove('hidden');
+                document.getElementById('step-title').innerText = `Step ${currentStep} of ${totalQuestions}`;
+                
+                const percent = Math.round((currentStep / totalQuestions) * 100);
+                document.getElementById('step-percent').innerText = `${percent}% completed`;
+                document.getElementById('progress-bar').style.width = `${percent}%`;
+            } else if (currentStep === 4) {
+                document.getElementById('step-result').classList.remove('hidden');
+                document.getElementById('navigation-buttons').classList.add('hidden'); 
+                
+                document.getElementById('step-title').innerText = `Done!`;
+                document.getElementById('step-percent').innerText = `100%`;
+                document.getElementById('progress-bar').style.width = `100%`;
+                document.getElementById('progress-bar').classList.remove('bg-indigo-600');
+                document.getElementById('progress-bar').classList.add('bg-emerald-500');
+
+                calculateFinalPrice();
+            }
+
+            const prevBtn = document.getElementById('prev-btn');
+            if (currentStep > 1 && currentStep <= totalQuestions) {
+                prevBtn.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                prevBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function calculateFinalPrice() {
+            const form = document.getElementById('quiz-form');
+            
+            const selectedHousing = form.querySelector('input[name="housingType"]:checked').value;
+            let selectedArea = parseInt(document.getElementById('area-slider').value);
+            const selectedRepair = form.querySelector('input[name="repairType"]:checked').value;
+
+            if (currentUnit === 'imperial') {
+                selectedArea = selectedArea / 10.7639;
+            }
+
+            const basePricePerMeter = BASE_PRICES[selectedRepair];
+            const multiplier = HOUSING_MULTIPLIERS[selectedHousing];
+            
+            let total = selectedArea * basePricePerMeter * multiplier;
+
+            const formattedPrice = Math.round(total).toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            });
+            document.getElementById('total-price').innerText = formattedPrice;
+        }
+
+        // === LIVE TELEGRAM PIPELINE INTEGRATION ===
+        async function submitLeadForm(btnElement) {
+            const contactInput = document.getElementById('user-contact');
+            
+            // Simple validation guard
+            if (!contactInput.value.trim()) {
+                contactInput.focus();
+                contactInput.classList.add('border-red-500');
+                return;
+            } else {
+                contactInput.classList.remove('border-red-500');
+            }
+
+            // Проверяем, подгрузились ли переменные из файла env.js
+            if (typeof TELEGRAM_BOT_TOKEN === 'undefined' || typeof TELEGRAM_CHAT_ID === 'undefined') {
+                console.error("Configuration Error: env.js file is missing or variables are undefined.");
+                alert("Error: Local environment configuration not found. Please ensure env.js is created locally.");
+                return;
+            }
+
+            // Lock UI button interactions and show pending loader
+            btnElement.disabled = true;
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "Sending Estimate Request...";
+
+            // Parse selected components to human-readable names
+            const rawHousing = document.querySelector('input[name="housingType"]:checked').value;
+            const housingMap = { new: "New Build 🏢", resale: "Resale 🧱", house: "House 🏡" };
+            const housingText = housingMap[rawHousing] || rawHousing;
+
+            const areaSizeValue = document.getElementById('area-slider').value;
+            const unitSystemText = currentUnit === 'metric' ? 'sq.m.' : 'sq.ft.';
+
+            const rawRepair = document.querySelector('input[name="repairType"]:checked').value;
+            const repairMap = { cosmetic: "Cosmetic ⚡", capital: "Major Renovation 🛠", designer: "Premium Design ✨" };
+            const repairText = repairMap[rawRepair] || rawRepair;
+
+            const computedPrice = document.getElementById('total-price').innerText;
+            const userEndpointContact = contactInput.value.trim();
+
+            // Structure Markdown message template string
+            const telegramMessage = `🚀 *New Renovation Lead Received!*\n\n` +
+                                      `• *Property Layout:* ${housingText}\n` +
+                                      `• *Total Workspace Sizing:* ${areaSizeValue} ${unitSystemText}\n` +
+                                      `• *Renovation Standard:* ${repairText}\n` +
+                                      `• *Computed Estimate Value:* ${computedPrice}\n\n` +
+                                      `📞 *User Lead Contact:* ${userEndpointContact}`;
+
+            const targetApiEndpoint = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+            try {
+                const response = await fetch(targetApiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: telegramMessage,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('step-result').classList.add('hidden');
+                    document.getElementById('step-success').classList.remove('hidden');
+                } else {
+                    const errors = await response.json();
+                    console.error("Telegram API rejects execution request:", errors);
+                    alert("Could not process transmission payload. Check Telegram chat permissions.");
+                }
+            } catch (networkError) {
+                console.error("Network interface pipeline fault:", networkError);
+                alert("Connection pipeline error. Ensure active network accessibility.");
+            } finally {
+                btnElement.disabled = false;
+                btnElement.innerText = originalText;
+            }
+        }
+
+        function restartQuiz() {
+            currentStep = 1;
+            document.getElementById('step-success').classList.add('hidden');
+            document.getElementById('user-contact').value = '';
+            
+            document.getElementById('progress-bar').classList.remove('bg-emerald-500');
+            document.getElementById('progress-bar').classList.add('bg-indigo-600');
+            
+            setUnit('metric');
+            showStep();
+        }
+    </script>
+</body>
+</html>
