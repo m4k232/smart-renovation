@@ -10,11 +10,9 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Explicit hidden utility safeguard */
         .hidden {
             display: none !important;
         }
-        /* Smooth transitions for quiz steps */
         .fade-in {
             animation: fadeIn 0.4s ease-in-out forwards;
         }
@@ -31,7 +29,7 @@
         <div class="w-full lg:w-5/12 space-y-6 text-center lg:text-left">
             <div class="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-400 text-xs px-3 py-1.5 rounded-full font-medium border border-indigo-500/20">
                 <span class="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                Smart Estimator v3.2 (Flexible Contacts)
+                Smart Estimator v3.3
             </div>
             
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
@@ -407,7 +405,6 @@
             document.getElementById('total-price').innerText = formattedPrice;
         }
 
-        // Resets the validation border/error message style states reactively on user typing
         function resetContactError() {
             const input = document.getElementById('user-contact');
             const errorMsg = document.getElementById('phone-error-msg');
@@ -417,22 +414,18 @@
             input.classList.add('focus:border-indigo-500', 'focus:ring-indigo-500');
         }
 
-        // === LIVE VERCEL PIPELINE INTEGRATION WITH FLEXIBLE VALIDATION ===
+        // === LIVE VERCEL PIPELINE PROCESSING INTERACTION ===
         async function submitLeadForm(btnElement) {
             const contactInput = document.getElementById('user-contact');
             const errorMsg = document.getElementById('phone-error-msg');
             const rawValue = contactInput.value.trim();
             
-            // --- FLEXIBLE CONTACT VALIDATION ENGINE ---
-            // 1. Condition for Telegram handle: starts with '@' or contains letters, and has at least 5 characters
             const hasLetters = /[a-zA-Z]/.test(rawValue);
             const isTelegram = (rawValue.startsWith('@') && rawValue.length >= 5) || (hasLetters && rawValue.length >= 5);
             
-            // 2. Condition for International phone: contains a '+' and has between 7 to 15 numbers total
             const digitsOnly = rawValue.replace(/\D/g, "");
             const isPhone = rawValue.includes('+') && digitsOnly.length >= 7 && digitsOnly.length <= 15;
             
-            // Short-circuit submission block if string meets neither criteria
             if (!isTelegram && !isPhone) {
                 errorMsg.classList.remove('hidden');
                 contactInput.classList.remove('focus:border-indigo-500', 'focus:ring-indigo-500');
@@ -441,12 +434,10 @@
                 return;
             }
 
-            // Lock UI button interactions and show pending loader
             btnElement.disabled = true;
             const originalText = btnElement.innerText;
             btnElement.innerText = "Sending Estimate Request...";
 
-            // Parse selected components to human-readable names
             const rawHousing = document.querySelector('input[name="housingType"]:checked').value;
             const areaSizeValue = document.getElementById('area-slider').value;
             const unitSystemText = currentUnit === 'metric' ? 'sq.m.' : 'sq.ft.';
@@ -474,11 +465,9 @@
                     document.getElementById('step-result').classList.add('hidden');
                     document.getElementById('thank-you-screen').classList.remove('hidden');
                 } else {
-                    console.error("Server rejects request:", result);
                     alert("Error from server: " + (result.error || "Could not process request."));
                 }
             } catch (networkError) {
-                console.error("Network interface pipeline fault:", networkError);
                 alert("Connection pipeline error. Ensure active network accessibility.");
             } finally {
                 btnElement.disabled = false;
